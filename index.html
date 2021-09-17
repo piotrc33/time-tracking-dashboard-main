@@ -23,93 +23,166 @@
   </head>
   <body>
     <div class="container">
-      <section class="report-info report-section">
-        Report for Jeremy Robson Daily Weekly Monthly
+      <section class="report-header">
+        <div class="report-info">
+          <img
+            src="images/image-jeremy.png"
+            alt="user-image"
+            class="report-img"
+          />
+          <div class="report-for">Report for</div>
+          <div class="report-name">Jeremy Robson</div>
+        </div>
+        <div class="report-categories">
+          <div class="category active">Daily</div>
+          <div class="category">Weekly</div>
+          <div class="category">Monthly</div>
+        </div>
       </section>
       <section class="report-work report-section">
-        Work 5hrs
-        <!-- daily -->
-        Previous - 7hrs
-        <!-- daily -->
-        32hrs
-        <!-- weekly -->
-        Previous - 36hrs
-        <!-- weekly -->
-        103hrs
-        <!-- monthly -->
-        Previous - 128hrs
-        <!-- monthly -->
+        <img src="images/icon-work.svg" alt="" class="icon" />
+        <div class="stat-panel">
+          <div class="stat-title">Work</div>
+          <img src="images/icon-ellipsis.svg" alt="" class="stat-more" />
+          <div class="stat-current"></div>
+          <div class="stat-previous">
+            Previous - 7hrs
+            <!-- daily -->
+          </div>
+        </div>
       </section>
       <section class="report-play report-section">
-        Play 1hr
-        <!-- daily -->
-        Previous - 2hrs
-        <!-- daily -->
-        10hrs
-        <!-- weekly -->
-        Previous - 8hrs
-        <!-- weekly -->
-        23hrs
-        <!-- monthly -->
-        Previous - 29hrs
-        <!-- monthly -->
+        <img src="images/icon-play.svg" alt="" class="icon" />
+        <div class="stat-panel">
+          <div class="stat-title">Play</div>
+          <img src="images/icon-ellipsis.svg" alt="" class="stat-more" />
+          <div class="stat-current">
+            1hr
+            <!-- daily -->
+          </div>
+          <div class="stat-previous">
+            Previous - 2hrs
+            <!-- daily -->
+          </div>
+        </div>
       </section>
       <section class="report-study report-section">
-        Study 0hrs
-        <!-- daily -->
-        Previous - 1hr
-        <!-- daily -->
-        4hrs
-        <!-- weekly -->
-        Previous - 7hrs
-        <!-- weekly -->
-        13hrs
-        <!-- monthly -->
-        Previous - 19hrs
-        <!-- monthly -->
+        <img src="images/icon-study.svg" alt="" class="icon" />
+        <div class="stat-panel">
+          <div class="stat-title">Study</div>
+          <img src="images/icon-ellipsis.svg" alt="" class="stat-more" />
+          <div class="stat-current">
+            0hrs
+            <!-- daily -->
+          </div>
+          <div class="stat-previous">
+            Previous - 1hr
+            <!-- daily -->
+          </div>
+        </div>
       </section>
       <section class="report-exercise report-section">
-        Exercise 1hr
-        <!-- daily -->
-        Previous - 1hr
-        <!-- daily -->
-        4hrs
-        <!-- weekly -->
-        Previous - 5hrs
-        <!-- weekly -->
-        11hrs
-        <!-- monthly -->
-        Previous - 18hrs
-        <!-- monthly -->
+        <img src="images/icon-exercise.svg" alt="" class="icon" />
+        <div class="stat-panel">
+          <div class="stat-title">Exercise</div>
+          <img src="images/icon-ellipsis.svg" alt="" class="stat-more" />
+          <div class="stat-current">
+            1hr
+            <!-- daily -->
+          </div>
+          <div class="stat-previous">
+            Previous - 1hr
+            <!-- daily -->
+          </div>
+        </div>
       </section>
       <section class="report-social report-section">
-        Social 1hr
-        <!-- daily -->
-        Previous - 3hrs
-        <!-- daily -->
-        5hrs
-        <!-- weekly -->
-        Previous - 10hrs
-        <!-- weekly -->
-        21hrs
-        <!-- monthly -->
-        Previous - 23hrs
-        <!-- monthly -->
+        <img src="images/icon-social.svg" alt="" class="icon" />
+        <div class="stat-panel">
+          <div class="stat-title">Social</div>
+          <img src="images/icon-ellipsis.svg" alt="" class="stat-more" />
+          <div class="stat-current">
+            1hr
+            <!-- daily -->
+          </div>
+          <div class="stat-previous">
+            Previous - 3hrs
+            <!-- daily -->
+          </div>
+        </div>
       </section>
-      <section class="report-self report-section-care">
-        Self Care 0hrs
-        <!-- daily -->
-        Previous - 1hr
-        <!-- daily -->
-        2hrs
-        <!-- weekly -->
-        Previous - 2hrs
-        <!-- weekly -->
-        7hrs
-        <!-- monthly -->
-        Previous - 11hrs
-        <!-- monthly -->
+      <section class="report-self-care report-section">
+        <img src="images/icon-self-care.svg" alt="" class="icon" />
+        <div class="stat-panel">
+          <div class="stat-title">Self Care</div>
+          <img src="images/icon-ellipsis.svg" alt="" class="stat-more" />
+          <div class="stat-current">
+            1hr
+            <!-- daily -->
+          </div>
+          <div class="stat-previous">
+            Previous - 1hr
+            <!-- daily -->
+          </div>
+        </div>
       </section>
     </div>
+
+    <script>
+      let currentCategory = "daily";
+
+      const currentData = document.getElementsByClassName("stat-current");
+      const previousData =
+        document.getElementsByClassName("stat-previous");
+
+      const categories = document.getElementsByClassName("category");
+      for (let i = 0; i < categories.length; i++) {
+        categories[i].addEventListener("click", function (e) {
+          resetActive();
+          const element = e.target;
+          currentCategory = element.innerHTML.toLowerCase();
+          element.className += " active";
+          updateStats();
+        });
+      }
+
+      updateStats();
+
+      function updateStats() {
+        fetch("./data.json")
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            for (let i = 0; i < data.length; i++) {
+              const current = data[i].timeframes[currentCategory].current;
+              currentData[i].innerHTML =
+                current + (current === 1 ? "hr" : "hrs");
+              previousData[i].innerHTML =
+                previousTimeframe() + data[i].timeframes[currentCategory].previous + "hrs";
+            }
+          });
+      }
+
+      function resetActive() {
+        const active = document.getElementsByClassName("active")[0];
+        active.className = "category";
+      }
+
+      function previousTimeframe() {
+        switch(currentCategory) {
+          case "daily":
+            return "Yesterday - ";
+            break;
+          case "weekly":
+            return "Last Week - ";
+            break;
+          case "monthly":
+            return "Last Month - ";
+            break;
+        }
+      }
+
+    </script>
   </body>
 </html>
